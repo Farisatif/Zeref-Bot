@@ -15,7 +15,7 @@ global.owner = [
 ]
 
 global.suittag = ['967778088098']
-global.prems = ['967782114485']
+global.prems = ['967782114485','201102471574']
 global.reportes_solicitudes = ['967778088098']
 
 // معلومات البوت والعلامة
@@ -32,7 +32,7 @@ global.imagen3 = fs.readFileSync('./src/Pre Bot Publi.png')
 global.imagen4 = fs.readFileSync('./Menu.png')
 
 // مشرفين البوت
-global.mods = []
+global.mods = ['967778088098']
 
 // إعدادات الوقت والتاريخ
 global.d = new Date(Date.now() + 3600000)

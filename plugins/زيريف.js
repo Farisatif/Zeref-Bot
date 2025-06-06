@@ -1,14 +1,18 @@
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text }) => {
+  // إرسال تفاعل روبوت
   await conn.sendMessage(m.chat, { react: { text: '🤖', key: m.key } });
-  if (!text) return m.reply("اكتب سؤالك بعد الأمر\nمثال:\n .زيريف ما فائدتك؟");
+
+  // التحقق من وجود السؤال
+  if (!text) return m.reply("🧠 أرسل سؤالك بعد الأمر.\nمثال:\n.زيريف ما هو الذكاء الاصطناعي؟");
 
   try {
     let result = await askOpenRouter(text);
     await m.reply(result);
   } catch (e) {
-    await m.reply("حدث خطأ:\n" + e.message);
+    console.error(e);
+    await m.reply("❌ حدث خطأ أثناء الاتصال:\n" + (e.message || e));
   }
 }
 
@@ -18,29 +22,30 @@ handler.command = /^زيريف$/i;
 
 export default handler;
 
-// ============ OpenRouter Function ============
+// ============ وظيفة OpenRouter ============
 
 async function askOpenRouter(prompt) {
-  const apiKey = "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"; // ضع مفتاح OpenRouter هنا
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+const apiKey = process.env.OPENROUTER_API_KEY;
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
+      "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-3-8b-instruct",
+      model: "openai/gpt-3.5-turbo", // يمكنك تغييره مثلاً إلى gpt-4 أو anthropic/claude
       messages: [
+        { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح ومختصر." },
         { role: "user", content: prompt }
       ]
     })
   });
 
-  const data = await res.json();
+  const data = await response.json();
 
-  if (!res.ok) {
-    throw new Error(data.error?.message || "فشل الاتصال بـ OpenRouter");
+  if (!response.ok) {
+    throw new Error(data.error?.message || "فشل الاتصال بخدمة OpenRouter.");
   }
 
-  return data.choices?.[0]?.message?.content || "لا يوجد رد.";
+  return data.choices?.[0]?.message?.content?.trim() || "❓ لم أتمكن من توليد رد.";
 }

@@ -7,7 +7,7 @@ let handler = async (m, { conn, command }) => {
   }
 
   if (command === 'ايقاف') {
-    if (!handler.rowner) return; // يمكن تعديل هذا حسب الصلاحيات
+    if (!handler.prems) return; // يمكن تعديل هذا حسب الصلاحيات
     chat.autoReply = false;
     return m.reply('تم تعطيل الردود التلقائية.');
   }
@@ -16,6 +16,6 @@ let handler = async (m, { conn, command }) => {
 handler.help = ['تشغيل', 'ايقاف'];
 handler.tags = ['owner'];
 handler.command = /^تشغيل|ايقاف$/i;
-handler.rowner = true; // فقط المالك يستطيع الإيقاف
+handler.prems = true; // فقط المالك يستطيع الإيقاف
 
 export default handler;
