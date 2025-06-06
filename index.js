@@ -112,7 +112,6 @@ process.on('unhandledRejection', console.error)
 // 🟢 Express server لحفظ الاتصال نشطًا في Railway أو غيرها
 const app = express()
 app.get('/', (_, res) => res.send('✅ Bot is running'))
-app.listen(8080, () => console.log('✅ السيرفر يعمل على المنفذ 8080'))
-
+app.listen(process.env.PORT || 3000, () => console.log("Listening..."));
 // 🚀 بدء التشغيل
 startWithInternetCheck()

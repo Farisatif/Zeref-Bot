@@ -33,8 +33,8 @@ const apiKey = process.env.OPENROUTER_API_KEY;
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "openai/gpt-3.5-turbo", // يمكنك تغييره مثلاً إلى gpt-4 أو anthropic/claude
-      messages: [
+model: "mistralai/mistral-7b-instruct"
+,      messages: [
         { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح ومختصر." },
         { role: "user", content: prompt }
       ]
