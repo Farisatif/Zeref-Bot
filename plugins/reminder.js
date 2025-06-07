@@ -1,28 +1,36 @@
 import fs from 'fs'
 import path from 'path'
 import schedule from 'node-schedule'
+import { DateTime, Duration } from 'luxon' // ✅ استيراد Duration من luxon
 
 const remindersFile = path.resolve('./reminders.json')
 if (!fs.existsSync(remindersFile)) fs.writeFileSync(remindersFile, '[]')
 
-// دالة لجدولة التذكير
+// ⚠️ غيّر المنطقة الزمنية حسب موقعك
+const TIMEZONE = 'Asia/Riyadh'
+
+// 🔁 دالة لجدولة التذكير
 function scheduleReminder(reminder, conn) {
   let [hour, minute] = reminder.time.split(':').map(Number)
   let ruleOrDate
 
   if (reminder.repeat === 'مرة') {
-    let now = new Date()
-    let when = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute)
-    if (when <= now) when.setDate(when.getDate() + 1)
-    ruleOrDate = when
+    let now = DateTime.now().setZone(TIMEZONE)
+    let when = now.set({ hour, minute, second: 0, millisecond: 0 })
+    if (when <= now) when = when.plus({ days: 1 })
+    ruleOrDate = when.toJSDate()
   } else {
     let rule = new schedule.RecurrenceRule()
     rule.hour = hour
     rule.minute = minute
-    rule.tz = 'Etc/UTC'
+    rule.tz = TIMEZONE
 
-    if (reminder.repeat === 'اسبوعي') rule.dayOfWeek = new Date().getDay()
-    else if (reminder.repeat === 'شهري') rule.date = new Date().getDate()
+    if (reminder.repeat === 'اسبوعي') {
+      rule.dayOfWeek = DateTime.now().setZone(TIMEZONE).weekday % 7 // 0=Sunday
+    } else if (reminder.repeat === 'شهري') {
+      rule.date = DateTime.now().setZone(TIMEZONE).day
+    }
+
     ruleOrDate = rule
   }
 
@@ -33,7 +41,7 @@ function scheduleReminder(reminder, conn) {
   })
 }
 
-// تحميل التذكيرات من الملف عند التشغيل
+// 🔁 تحميل التذكيرات عند تشغيل البوت
 export function loadAndScheduleReminders(conn) {
   let data = JSON.parse(fs.readFileSync(remindersFile))
   for (let reminder of data) {
@@ -41,10 +49,9 @@ export function loadAndScheduleReminders(conn) {
   }
 }
 
-// أمر البوت
+// ⚙️ أمر البوت
 let handler = async (m, { args, command, usedPrefix, conn }) => {
   let example = `${usedPrefix + command} 18:30 اشرب دواء يومي`
-
   if (args.length < 3)
     return m.reply(`❗ الصيغة الصحيحة:\n${usedPrefix + command} [الوقت] [الرسالة] [التكرار]\nمثال:\n${example}`)
 
@@ -58,6 +65,15 @@ let handler = async (m, { args, command, usedPrefix, conn }) => {
   if (!['مرة', 'يومي', 'اسبوعي', 'شهري'].includes(repeat))
     return m.reply('❌ نوع التكرار غير صحيح. اختر من: مرة، يومي، اسبوعي، شهري')
 
+  // 🧮 حساب الوقت المتبقي
+  let [hour, minute] = time.split(':').map(Number)
+  let now = DateTime.now().setZone(TIMEZONE)
+  let target = now.set({ hour, minute, second: 0, millisecond: 0 })
+  if (target <= now) target = target.plus({ days: 1 })
+  let diff = target.diff(now, ['hours', 'minutes', 'seconds']).toObject()
+
+  let remainingTime = `${String(Math.floor(diff.hours)).padStart(2, '0')}:${String(Math.floor(diff.minutes)).padStart(2, '0')}:${String(Math.floor(diff.seconds)).padStart(2, '0')}`
+
   let reminder = {
     id: `${m.chat}-${Date.now()}`,
     chat: m.chat,
@@ -70,10 +86,9 @@ let handler = async (m, { args, command, usedPrefix, conn }) => {
   let data = JSON.parse(fs.readFileSync(remindersFile))
   data.push(reminder)
   fs.writeFileSync(remindersFile, JSON.stringify(data, null, 2))
-
   scheduleReminder(reminder, conn)
 
-  await m.reply(`✅ تم ضبط التذكير بنجاح\n🕒 الوقت: ${time}\n🔁 التكرار: ${repeat}\n💬 الرسالة: ${message}`)
+  await m.reply(`✅ تم ضبط التذكير بنجاح\n🕒 الوقت: ${time}\n🔁 التكرار: ${repeat}\n💬 الرسالة: ${message}\n⏳ الوقت المتبقي: ${remainingTime}`)
 }
 
 handler.command = /^ذكرني$/i

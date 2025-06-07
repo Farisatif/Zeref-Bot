@@ -113,7 +113,6 @@ loadChatgptDB();
 
 global.authFile = `Zeref`;
 const { state, saveState, saveCreds } = await useMultiFileAuthState(global.authFile);
-const msgRetryCounterMap = (MessageRetryMap) => { };
 const { version } = await fetchLatestBaileysVersion();
 
 const connectionOptions = {
@@ -275,7 +274,6 @@ global.reloadHandler = async function (restatConn) {
   conn.credsUpdate = saveCreds.bind(global.conn, true);
 
   const currentDateTime = new Date();
-  const messageDateTime = new Date(conn.ev);
   if (currentDateTime >= messageDateTime) {
     const chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map((v) => v[0]);
   } else {
@@ -437,35 +435,76 @@ setInterval(async () => {
 
 
 
-setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn.user) return;
-  await purgeSession();
-  console.log(chalk.cyanBright(`\n▣────────[ AUTOPURGESESSIONS ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`));
-}, 1000 * 60 * 60);
-setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn.user) return;
-  await purgeSessionSB();
-  console.log(chalk.cyanBright(`\n▣────────[ AUTO_PURGE_SESSIONS_SUB-BOTS ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`));
-}, 1000 * 60 * 60);
-setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn.user) return;
-  await purgeOldFiles();
-  console.log(chalk.cyanBright(`\n▣────────[ AUTO_PURGE_OLDFILES ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`));
-}, 1000 * 60 * 60);
-let stopped = false;
-setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn.user) return;
-  const status = global.db.data.settings[conn.user.jid] || {};
-  const _uptime = process.uptime() * 1000;
-  const uptime = clockString(_uptime);
-  const bio = `مده النشاط: ${uptime} ┃من صنع 彡ℤ𝕖𝕣𝕖𝕗┃ حساب المطور: https://github.com/Farisatif`;
-  await conn.updateProfileStatus(bio).catch((_) => _);
-}, 60000);
-function clockString(ms) {
-  const d = isNaN(ms) ? '--' : Math.floor(ms / 86400000);
-  const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24;
-  const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60;
-  const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60;
-  return [d, ' يوم(s) ️', h, ' ساعه(s) ', m, ' دقيقه(s) ', s, ' ثانيه(s) '].map((v) => v.toString().padStart(2, 0)).join('');
+// تعريف المتغير قبل استخدامه
+let stopped = false
+
+// 🔁 حذف ملفات الجلسة الرئيسية
+async function purgeSession() {
+  const sessionPath = './session'
+  if (fs.existsSync(sessionPath)) {
+    for (let file of fs.readdirSync(sessionPath)) {
+      fs.unlinkSync(path.join(sessionPath, file))
+    }
+  }
 }
-_quickTest().catch(console.error);
+
+// 🔁 حذف ملفات جلسات البوتات الفرعية
+async function purgeSessionSB() {
+  const subBotPath = './Zeref'
+  if (fs.existsSync(subBotPath)) {
+    for (let file of fs.readdirSync(subBotPath)) {
+      fs.unlinkSync(path.join(subBotPath, file))
+    }
+  }
+}
+
+// 🔁 حذف الملفات المؤقتة أو القديمة
+async function purgeOldFiles() {
+  const tempPath = './tmp'
+  if (fs.existsSync(tempPath)) {
+    for (let file of fs.readdirSync(tempPath)) {
+      fs.unlinkSync(path.join(tempPath, file))
+    }
+  }
+}
+
+// ⏱️ جدول التنظيف التلقائي كل ساعة
+setInterval(async () => {
+  if (stopped === 'close' || !conn || !conn.user) return
+  await purgeSession()
+  console.log(chalk.cyanBright(`\n▣────────[ AUTOPURGESESSIONS ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`))
+}, 1000 * 60 * 60)
+
+setInterval(async () => {
+  if (stopped === 'close' || !conn || !conn.user) return
+  await purgeSessionSB()
+  console.log(chalk.cyanBright(`\n▣────────[ AUTO_PURGE_SESSIONS_SUB-BOTS ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`))
+}, 1000 * 60 * 60)
+
+setInterval(async () => {
+  if (stopped === 'close' || !conn || !conn.user) return
+  await purgeOldFiles()
+  console.log(chalk.cyanBright(`\n▣────────[ AUTO_PURGE_OLDFILES ]───────────···\n│\n▣─❧ ARCHIVOS ELIMINADOS ✅\n│\n▣────────────────────────────────────···\n`))
+}, 1000 * 60 * 60)
+
+// ⏱️ تحديث البايو
+setInterval(async () => {
+  if (stopped === 'close' || !conn || !conn.user) return
+  const status = global.db.data.settings[conn.user.jid] || {}
+  const _uptime = process.uptime() * 1000
+  const uptime = clockString(_uptime)
+  const bio = `مده النشاط: ${uptime} ┃من صنع 彡ℤ𝕖𝕣𝕖𝕗┃ حساب المطور: https://github.com/Farisatif`
+  await conn.updateProfileStatus(bio).catch((_) => _)
+}, 60000)
+
+// ⏱️ حساب الوقت المنقضي
+function clockString(ms) {
+  const d = isNaN(ms) ? '--' : Math.floor(ms / 86400000)
+  const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24
+  const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
+  const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
+  return [d, ' يوم(s) ️', h, ' ساعه(s) ', m, ' دقيقه(s) ', s, ' ثانيه(s) ']
+    .map((v) => v.toString().padStart(2, 0)).join('')
+}
+
+_quickTest().catch(console.error)
