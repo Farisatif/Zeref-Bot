@@ -108,7 +108,6 @@ process.on('uncaughtException', console.error)
 process.on('unhandledRejection', console.error)
 
 // 🟢 Express server لحفظ الاتصال نشطًا في Railway أو غيرها
-import express from 'express'
 const app = express()
 
 app.get('/', (_, res) => res.send('✅ Bot is running'))
