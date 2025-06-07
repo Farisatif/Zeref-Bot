@@ -16,9 +16,9 @@ let handler = async (m, { conn, text }) => {
   }
 }
 
-handler.help = [".."];
+handler.help = ["."];
 handler.tags = ["ai"];
-handler.command = /^..$/i;
+handler.command = /^.$/i;
 
 export default handler;
 
@@ -33,7 +33,7 @@ const apiKey = process.env.OPENROUTER_API_KEY;
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-model: "meta-llama/llama-3-8b-instruct"
+model: "openai/gpt-3.5-turbo"
 ,      messages: [
         { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح ومختصر." },
         { role: "user", content: prompt }
