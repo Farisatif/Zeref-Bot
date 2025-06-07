@@ -35,7 +35,7 @@ const apiKey = process.env.OPENROUTER_API_KEY;
     body: JSON.stringify({
 model: "openai/gpt-3.5-turbo"
 ,      messages: [
-        { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح ومختصر." },
+        { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح وعميق ومليئ بلمشاعر." },
         { role: "user", content: prompt }
       ]
     })
