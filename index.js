@@ -103,15 +103,22 @@ function startWithInternetCheck() {
     }
   })
 }
-
 // ⚠️ منع الخروج المفاجئ وعرض الأخطاء
 process.on('uncaughtException', console.error)
 process.on('unhandledRejection', console.error)
 
 // 🟢 Express server لحفظ الاتصال نشطًا في Railway أو غيرها
+import express from 'express'
 const app = express()
-app.get('/', (_, res) => res.send('✅ Bot is running'))
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => console.log(`🌐 Listening on port ${PORT}...`))
 
+app.get('/', (_, res) => res.send('✅ Bot is running'))
+
+const PORT = process.env.PORT || 3000
+
+// ✅ تحقق من عدم تكرار التشغيل
+if (!app.listening) {
+  app.listen(PORT, () => console.log(`🌐 Listening on port ${PORT}...`))
+}
+
+// 🟢 شغّل البوت بعد التأكد
 startWithInternetCheck()

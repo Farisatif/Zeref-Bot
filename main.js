@@ -273,6 +273,8 @@ global.reloadHandler = async function (restatConn) {
   conn.credsUpdate = saveCreds.bind(global.conn, true);
 
   const currentDateTime = new Date();
+  const messageDateTime = new Date();
+
   if (currentDateTime >= messageDateTime) {
     const chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map((v) => v[0]);
   } else {
