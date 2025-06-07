@@ -16,9 +16,9 @@ let handler = async (m, { conn, text }) => {
   }
 }
 
-handler.help = ["زيريف"];
+handler.help = [".."];
 handler.tags = ["ai"];
-handler.command = /^زيريف$/i;
+handler.command = /^..$/i;
 
 export default handler;
 
@@ -33,7 +33,7 @@ const apiKey = process.env.OPENROUTER_API_KEY;
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-model: "mistralai/mistral-7b-instruct"
+model: "meta-llama/llama-3-8b-instruct"
 ,      messages: [
         { role: "system", content: "أجب على الأسئلة باللغة العربية فقط، وبأسلوب واضح ومختصر." },
         { role: "user", content: prompt }
