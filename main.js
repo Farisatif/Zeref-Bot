@@ -131,7 +131,6 @@ const connectionOptions = {
     }
     return proto.Message.fromObject({});
   },
-  msgRetryCounterMap,
   logger: pino({ level: 'silent' }),
   auth: {
     creds: state.creds,
