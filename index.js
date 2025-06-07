@@ -73,17 +73,16 @@ function start(file) {
     isRunning = false
     console.error('❎ exit signal/code:', signal || code)
 
-    // لا تعيد التشغيل إذا كانت SIGTERM (إنهاء من النظام أو الريلوى)
     if (signal === 'SIGTERM') {
       console.log('🛑 تم الإنهاء بواسطة SIGTERM، إيقاف البوت نهائيًا')
       process.exit()
     }
 
-    // إعادة تشغيل البوت لأي سبب آخر
     start(file)
   })
 
   let opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
+
   if (!opts['test']) {
     if (!rl.listenerCount('line')) {
       rl.on('line', line => {
@@ -99,7 +98,7 @@ function startWithInternetCheck() {
       console.log('✅ الإنترنت متصل، جاري تشغيل البوت...')
       start('main.js')
     } else {
-      console.log('❌ لا يوجد اتصال بالإنترنت، سيتم إعادة المحاولة بعد 5 ثواني...')
+      console.log('❌ لا يوجد اتصال بالإنترنت، سيتم إعادة المحاولة بعد 5 ثوانٍ...')
       setTimeout(startWithInternetCheck, 5000)
     }
   })
@@ -112,6 +111,7 @@ process.on('unhandledRejection', console.error)
 // 🟢 Express server لحفظ الاتصال نشطًا في Railway أو غيرها
 const app = express()
 app.get('/', (_, res) => res.send('✅ Bot is running'))
-app.listen(process.env.PORT || 3000, () => console.log("Listening..."));
-// 🚀 بدء التشغيل
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => console.log(`🌐 Listening on port ${PORT}...`))
+
 startWithInternetCheck()
