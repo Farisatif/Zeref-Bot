@@ -469,5 +469,3 @@ function clockString(ms) {
   return [d, ' يوم(s) ️', h, ' ساعه(s) ', m, ' دقيقه(s) ', s, ' ثانيه(s) '].map((v) => v.toString().padStart(2, 0)).join('');
 }
 _quickTest().catch(console.error);
-
-

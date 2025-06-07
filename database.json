@@ -92,7 +92,7 @@
       "emas": 0,
       "emerald": 0,
       "esteh": 0,
-      "exp": 18343,
+      "exp": 18375,
       "expg": 0,
       "exphero": 0,
       "expired": 0,
@@ -436,7 +436,7 @@
       "psepick": 0,
       "robo": 0,
       "roboxp": 0,
-      "lastCommandTime": 1749174482751,
+      "lastCommandTime": 1749277402210,
       "commandCount": 1,
       "lastslot": 1749098727931
     },
@@ -2781,10 +2781,10 @@
       "lastSuccess": 1749087343587
     },
     "زيريف.js": {
-      "total": 14,
-      "success": 14,
-      "last": 1749093955561,
-      "lastSuccess": 1749093955561
+      "total": 15,
+      "success": 15,
+      "last": 1749277404363,
+      "lastSuccess": 1749277404363
     },
     "tr2.js": {
       "total": 3,
