@@ -441,7 +441,7 @@ let stopped = false
 
 // 🔁 حذف ملفات الجلسة الرئيسية
 async function purgeSession() {
-  const sessionPath = './session'
+  const sessionPath = './Zeref'
   if (fs.existsSync(sessionPath)) {
     for (let file of fs.readdirSync(sessionPath)) {
       fs.unlinkSync(path.join(sessionPath, file))
