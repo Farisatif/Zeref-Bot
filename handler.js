@@ -32,7 +32,7 @@ if (!m || !m.message) return
 	
 
 if (m.key.remoteJid === 'status@broadcast') return 
-
+if (m.isGroup) return
 // باقي كود الرد هنا 👇
 
 	
