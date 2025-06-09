@@ -31,7 +31,6 @@ let m = chatUpdate.messages[chatUpdate.messages.length - 1]
 if (!m || !m.message) return
 	
 
-if (m.key.remoteJid === 'status@broadcast') return 
 
 // باقي كود الرد هنا 👇
 
