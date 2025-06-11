@@ -69,6 +69,17 @@ function start(file) {
     }
   })
 
+  p.on('exit', (code, signal) => {
+    isRunning = false
+    console.error('❎ exit signal/code:', signal || code)
+
+    if (signal === 'SIGTERM') {
+      console.log('🛑 تم الإنهاء بواسطة SIGTERM، إيقاف البوت نهائيًا')
+      process.exit()
+    }
+
+    start(file)
+  })
 
   let opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 
