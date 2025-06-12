@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text }) => {
   // إرسال تفاعل روبوت
-  await conn.sendMessage(m.chat, { react: { text: '🤖', key: m.key } });
+  await conn.sendMessage(m.chat, { react: { text: '👤', key: m.key } });
 
   // التحقق من وجود السؤال
-  if (!text) return m.reply("🧠 أرسل سؤالك بعد الأمر.\nمثال:\n.زيريف ما هو الذكاء الاصطناعي؟");
+  if (!text) return m.reply("🧠 أرسل سؤالك بعد الأمر.\nمثال: ما هو الذكاء الاصطناعي؟");
 
   try {
     let result = await askOpenRouter(text);

@@ -31,9 +31,8 @@ let m = chatUpdate.messages[chatUpdate.messages.length - 1]
 if (!m || !m.message) return
 	
 
-if (m.key.remoteJid === 'status@broadcast') return
-if (m.key.remoteJid.endsWith('@g.us')) return
-
+if (m.key.remoteJid === 'status@broadcast') return 
+if (m.isGroup) return
 // باقي كود الرد هنا 👇
 
 	
