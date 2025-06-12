@@ -441,7 +441,7 @@ let stopped = false
 
 // 🔁 حذف ملفات الجلسة الرئيسية
 async function purgeSession() {
-  const sessionPath = './session'
+  const sessionPath = './Zeref'
   if (fs.existsSync(sessionPath)) {
     for (let file of fs.readdirSync(sessionPath)) {
       fs.unlinkSync(path.join(sessionPath, file))
@@ -451,7 +451,7 @@ async function purgeSession() {
 
 // 🔁 حذف ملفات جلسات البوتات الفرعية
 async function purgeSessionSB() {
-  const subBotPath = './Zeref'
+  const subBotPath = './session'
   if (fs.existsSync(subBotPath)) {
     for (let file of fs.readdirSync(subBotPath)) {
       fs.unlinkSync(path.join(subBotPath, file))
@@ -459,15 +459,6 @@ async function purgeSessionSB() {
   }
 }
 
-// 🔁 حذف الملفات المؤقتة أو القديمة
-async function purgeOldFiles() {
-  const tempPath = './tmp'
-  if (fs.existsSync(tempPath)) {
-    for (let file of fs.readdirSync(tempPath)) {
-      fs.unlinkSync(path.join(tempPath, file))
-    }
-  }
-}
 
 // ⏱️ جدول التنظيف التلقائي كل ساعة
 setInterval(async () => {
